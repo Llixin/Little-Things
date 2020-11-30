@@ -1,5 +1,6 @@
 import math
 from collections import defaultdict
+from itertools import combinations
 
 import matplotlib.pyplot as plt
 import networkx as nx
@@ -74,6 +75,17 @@ class CommunityDetection:
             if q < Q:
                 c, q = community, Q
             print('delete: {}--{}, TCS:{}, Q:{}'.format(u, v, mTCS, Q))
+        one = []
+        i = 0
+        while i < len(c):
+            if len(c[i]) == 1:
+                one.extend(c.pop(i))
+            else:
+                i += 1
+        for u, v in list(combinations(one, 2)):
+            self.graph.add_edge(u, v)
+        c.append(one)
+        q = self.cal_modularity(c)
         return c, q
 
 
@@ -87,7 +99,7 @@ def get_color(G, community):
 
 
 def main():
-    path = "data/dolphin.txt"
+    path = "data/club.txt"
     test = CommunityDetection(path)
     community, Q = test.detect()
     print('community:', community)
